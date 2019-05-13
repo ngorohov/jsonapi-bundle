@@ -21,8 +21,16 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
      */
     public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): string
     {
+        $class = $classMetadata->name;
+
+        $this->type = JsonApiStr::entityNameToType($entityName);
+
+        if (defined($class . '::TYPE')) {
+            $this->type = $class::TYPE;
+        }
+
         $requests = [];
-        foreach ($this->getActionsList($entityName) as $name => $action) {
+        foreach ($this->getActionsList($this->type) as $name => $action) {
             $requests[] = [
                 'name' => $action['title'],
                 'request' => [
@@ -34,7 +42,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
                         ],
                     ],
                     'body' => \in_array($name, ['add', 'edit']) ?
-                        $this->generateBody($entityName, $action['method'], $classMetadata) : '',
+                        $this->generateBody($this->type, $action['method'], $classMetadata) : '',
                     'url' => [
                         'raw' => '{{host}}'.$route.(\in_array($name, ['add', 'list']) ? '/' : '/1'),
                         'host' => [
@@ -50,7 +58,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         }
 
         $directory = [
-            'name' => $entityName,
+            'name' => $this->type,
             'description' => '',
             'item' => $requests,
         ];
@@ -64,10 +72,10 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         return self::POSTMAN_PATH;
     }
 
-    private function generateBody(string $entityName, string $method, ClassMetadata $classMetadata): array
+    private function generateBody(string $entityType, string $method, ClassMetadata $classMetadata): array
     {
         $data = [
-            'type' => JsonApiStr::entityNameToType($entityName),
+            'type' => $entityType,
         ];
 
         if ('PATCH' == $method) {
