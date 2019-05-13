@@ -14,13 +14,13 @@ class Relation extends AttributeAbstract
         $array = [
             'type' => [
                 'type' => 'string',
-                'enum' => [JsonApiStr::entityNameToType($this->get('targetEntity'))],
-                'example' => JsonApiStr::entityNameToType($this->get('targetEntity')),
+                'enum' => [$this->getType()],
+                'example' => $this->getType(),
             ],
             'id' => [
-                'type' => 'integer',
-                'minimum' => 1,
-                'description' => JsonApiStr::singularizeClassName($this->get('targetEntity')).' ID',
+                'type' => 'string',
+                'format' => 'uuid',
+                'description' => $this->getIdName(),
                 'example' => 'e0358a0e-e8bf-4251-a09d-3e1e75ae97ab',
             ],
         ];
@@ -44,6 +44,17 @@ class Relation extends AttributeAbstract
         return $relation;
     }
 
+    protected function getType()
+    {
+        $class = $this->get('targetEntity');
+
+        if (defined($class . '::TYPE')) {
+            return $class::TYPE;
+        }
+
+        return JsonApiStr::entityNameToType($class);
+    }
+
     public function generateName()
     {
         $class = $this->get('targetEntity');
@@ -53,5 +64,19 @@ class Relation extends AttributeAbstract
         }
 
         return JsonApiStr::singularizeClassName($this->get('targetEntity')). '_' . self::RELATIONS_SUFFIX;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getIdName(): string
+    {
+        $class = $this->get('targetEntity');
+
+        if (defined($class . '::TYPE')) {
+            return $class::TYPE . '.id';
+        }
+
+        return JsonApiStr::singularizeClassName($class) . ' ID';
     }
 }
