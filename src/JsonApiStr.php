@@ -28,7 +28,7 @@ class JsonApiStr
     {
         return sprintf(
             $withBrackets ? '{%s}' : '%s',
-            self::singularizeClassName($entityName).'_id'
+            $entityName.'.id'
         );
     }
 }

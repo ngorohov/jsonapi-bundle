@@ -9,6 +9,7 @@ abstract class CollectionGeneratorAbstract
 {
     protected $fileManager;
     protected $rootDirectory;
+    protected $type;
 
     const LIST_ACTION = 'list';
     const ADD_ACTION = 'add';
@@ -17,7 +18,7 @@ abstract class CollectionGeneratorAbstract
     const VIEW_ACTION = 'view';
 
     private static $actions = [
-        self::LIST_ACTION => ['title' => '%s List', 'method' => 'GET'],
+        self::LIST_ACTION => ['title' => 'List %s ', 'method' => 'GET'],
         self::ADD_ACTION => ['title' => 'Add %s', 'method' => 'POST'],
         self::EDIT_ACTION => ['title' => 'Edit %s', 'method' => 'PATCH'],
         self::DELETE_ACTION => ['title' => 'Delete %s', 'method' => 'DELETE'],
@@ -32,11 +33,11 @@ abstract class CollectionGeneratorAbstract
 
     abstract public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): ?string;
 
-    protected function getActionsList(string $entityName): array
+    protected function getActionsList(string $entityType): array
     {
         $actions = self::$actions;
         foreach ($actions as $name => &$action) {
-            $action['title'] = sprintf($action['title'], $entityName);
+            $action['title'] = sprintf($action['title'], $entityType);
         }
 
         return $actions;

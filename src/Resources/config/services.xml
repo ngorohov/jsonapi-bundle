@@ -39,6 +39,13 @@
             <argument type="service" id="maker.doctrine_helper" />
         </service>
 
+        <service id="maker.maker.make_api_doc" class="Paknahad\JsonApiBundle\Maker\ApiDoc">
+            <tag name="maker.command" />
+            <argument type="service" id="jsonapi.postman_collection_generator" />
+            <argument type="service" id="jsonapi.swagger_collection_generator" />
+            <argument type="service" id="maker.doctrine_helper" />
+        </service>
+
         <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
             <tag name="paknahad.json_api.finder" />
         </service>

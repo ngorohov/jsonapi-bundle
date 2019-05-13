@@ -39,7 +39,7 @@ class Request extends DataAbstract
         return [
             'in' => 'body',
             'name' => 'body',
-            'description' => $this->actionName.ucfirst($this->entityName),
+            'description' => $this->actionName.ucfirst($this->entityType),
             'required' => true,
             'schema' => [
                 'type' => 'object',
@@ -57,7 +57,7 @@ class Request extends DataAbstract
         }
 
         return [
-            'name' => JsonApiStr::genEntityIdName($this->entityName),
+            'name' => JsonApiStr::genEntityIdName($this->entityType),
             'in' => 'path',
             'required' => true,
             'type' => 'integer',

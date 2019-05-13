@@ -8,23 +8,23 @@ use Paknahad\JsonApiBundle\JsonApiStr;
 
 class Paths
 {
-    public static function buildPaths(array $actions, string $entityName, string $route, Attributes $attributes): array
+    public static function buildPaths(array $actions, string $entityType, string $route, Attributes $attributes): array
     {
         $paths = [];
 
         foreach ($actions as $name => $action) {
-            $path = self::generateUrl($route, $name, $entityName);
+            $path = self::generateUrl($route, $name, $entityType);
 
             $paths[$path][strtolower($action['method'])] = [
-                'tags' => [JsonApiStr::entityNameToType($entityName)],
+                'tags' => [$entityType],
                 'summary' => $action['title'],
-                'operationId' => $name.ucfirst($entityName),
+                'operationId' => $entityType.'.'.$name,
                 'produces' => ['application/json'],
-                'parameters' => (new Request($entityName, $attributes, $name, $route))->toArray(),
+                'parameters' => (new Request($entityType, $attributes, $name, $route))->toArray(),
                 'responses' => [
                     '200' => [
                         'description' => 'successful operation',
-                        'schema' => (new Response($entityName, $attributes, $name, $route))->toArray(),
+                        'schema' => (new Response($entityType, $attributes, $name, $route))->toArray(),
                     ],
                 ],
             ];
@@ -33,12 +33,12 @@ class Paths
         return $paths;
     }
 
-    private static function generateUrl($baseRoute, $actionName, $entityName)
+    private static function generateUrl($baseRoute, $actionName, $entityType)
     {
         return $baseRoute.'/'.
             (
                 \in_array($actionName, ['edit', 'delete', 'view']) ?
-                    JsonApiStr::genEntityIdName($entityName, true) : ''
+                    JsonApiStr::genEntityIdName($entityType, true) : ''
             );
     }
 }

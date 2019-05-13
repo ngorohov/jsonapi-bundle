@@ -10,13 +10,13 @@ abstract class DataAbstract
     /** @var Attributes */
     private $attributes;
 
-    protected $entityName;
+    protected $entityType;
     protected $actionName;
     protected $route;
 
-    public function __construct(string $entityName, Attributes $attributes, string $actionName, string $route)
+    public function __construct(string $entityType, Attributes $attributes, string $actionName, string $route)
     {
-        $this->entityName = $entityName;
+        $this->entityType = $entityType;
         $this->actionName = $actionName;
         $this->attributes = $attributes;
         $this->route = $route;
@@ -29,9 +29,9 @@ abstract class DataAbstract
         if ($containId) {
             $idProperties = [
                 'id' => [
-                    'type' => 'integer',
-                    'format' => 'int64',
-                    'example' => 12,
+                    'type' => 'string',
+                    'format' => 'uuid',
+                    'example' => 'e0358a0e-e8bf-4251-a09d-3e1e75ae97ab',
                 ],
             ];
         } else {
@@ -43,8 +43,8 @@ abstract class DataAbstract
             'properties' => array_merge(
                 $idProperties,
                 [
-                    'type' => ['type' => 'string', 'example' => JsonApiStr::entityNameToType($this->entityName)],
-                    'attributes' => ['$ref' => '#/definitions/'.$this->entityName],
+                    'type' => ['type' => 'string', 'example' => $this->entityType],
+                    'attributes' => ['$ref' => '#/definitions/'.$this->entityType],
                     'relationships' => $this->attributes->getRelations(),
                 ]
             ),

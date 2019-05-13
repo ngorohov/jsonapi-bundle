@@ -7,7 +7,7 @@ use Paknahad\JsonApiBundle\JsonApiStr;
 
 class Relation extends AttributeAbstract
 {
-    const RELATIONS_SUFFIX = '_relation';
+    const RELATIONS_SUFFIX = 'relation';
 
     public function toArray()
     {
@@ -21,7 +21,7 @@ class Relation extends AttributeAbstract
                 'type' => 'integer',
                 'minimum' => 1,
                 'description' => JsonApiStr::singularizeClassName($this->get('targetEntity')).' ID',
-                'example' => rand(2, 99),
+                'example' => 'e0358a0e-e8bf-4251-a09d-3e1e75ae97ab',
             ],
         ];
 
@@ -46,6 +46,12 @@ class Relation extends AttributeAbstract
 
     public function generateName()
     {
-        return JsonApiStr::singularizeClassName($this->get('targetEntity')).self::RELATIONS_SUFFIX;
+        $class = $this->get('targetEntity');
+
+        if (defined($class . '::TYPE')) {
+            return $class::TYPE . '.' . self::RELATIONS_SUFFIX;
+        }
+
+        return JsonApiStr::singularizeClassName($this->get('targetEntity')). '_' . self::RELATIONS_SUFFIX;
     }
 }
